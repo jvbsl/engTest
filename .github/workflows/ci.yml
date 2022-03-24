@@ -55,4 +55,4 @@ jobs:
       - name: Clone eng
         run: git clone --recurse-submodules https://github.com/engeniousproject/engenious.Sample
       - name: Build
-        run: dotnet build ./engenious.Sample/engenious.Sample.csproj --configuration Release
+        run: dotnet build ./engenious.Sample/engenious.Sample.csproj --configuration Release -v d
