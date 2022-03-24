@@ -1,0 +1,57 @@
+name: Continuous Integration
+
+on:
+  workflow_dispatch:
+    inputs:
+  push:
+    branches: [master, develop, feature/test-ci]
+  pull_request:
+    branches: [master, develop]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix: 
+        os: [ubuntu-latest]
+    env:
+      DISPLAY: :99.0
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2.4.0
+
+      - name: Install OpenGL in linux
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y locate libgl1-mesa-dev libglfw3
+          Xvfb :99 &
+        if: matrix.os == 'ubuntu-latest'
+
+      - name: Install OpenAl on linux
+        run: |
+          sudo apt-get install libopenal1 alsa-utils alsa-oss pulseaudio
+          sudo bash -c 'echo "autospawn = yes" >>/etc/pulse/client.conf'
+          pulseaudio --start
+        if: matrix.os == 'ubuntu-latest'
+
+      - name: Setup OpenGL on windows
+        run: ./.github/install-mesa-windows.ps1
+        if: matrix.os == 'windows-latest'
+
+      - name: Install OpenAl on windows
+        run: choco install openal
+        if: matrix.os == 'windows-latest'
+
+      - name: Setup .NET 5
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 5.0.x
+      - name: Setup .NET 6
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 6.0.x
+      - name: Clone eng
+        run: git clone --recurse-submodules https://github.com/engeniousproject/engenious.Full
+      - name: Build
+        run: dotnet build ./engenious.Full/engenious.Sample/engenious.Sample.csproj --configuration Release
