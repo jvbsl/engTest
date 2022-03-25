@@ -51,11 +51,13 @@ jobs:
       - name: Setup .NET 6
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: 6.0.x
+          dotnet-version: 6.0.100
+      - name: Setup ffmpeg
+        run: sudo apt install ffmpeg
       - name: Clone eng
         run: git clone --recurse-submodules https://github.com/engeniousproject/engenious.Sample
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
-        timeout-minutes: 180
+#      - name: Setup tmate session
+#        uses: mxschmitt/action-tmate@v3
+#        timeout-minutes: 180
       - name: Build
         run: dotnet build ./engenious.Sample/engenious.Sample.csproj --configuration Release -v d
