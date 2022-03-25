@@ -54,5 +54,8 @@ jobs:
           dotnet-version: 6.0.x
       - name: Clone eng
         run: git clone --recurse-submodules https://github.com/engeniousproject/engenious.Sample
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+        timeout-minutes: 180
       - name: Build
         run: dotnet build ./engenious.Sample/engenious.Sample.csproj --configuration Release -v d
